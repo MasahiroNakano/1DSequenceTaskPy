@@ -55,7 +55,7 @@ To start a virtual corridor you need to:
 For example, to run one the example file for the basic tunnel:
 ```bash
 conda activate pytunnel_venv
-python src/pytunnel/main.py examples/yaml/protocol_1/protocol_1_level_1.ymal'
+python src/pytunnel/main.py examples/yaml/protocol_1/protocol_1_level_1.yaml'
 ```
 
 To know more about the options of a tunnel script, use the `--help`/`-h` option, e.g.

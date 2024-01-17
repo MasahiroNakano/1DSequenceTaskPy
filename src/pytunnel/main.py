@@ -5,6 +5,13 @@ from misc import default_main, save_yaml
 import atexit
 import signal
 
+options = default_main()
+save_yaml(options)
+no_input_speed = not ('speed' in options['inputs'])
+flip_tunnel = make_flip_tunnel(
+    options,
+    test_mode=no_input_speed
+)
 
 # Define a function to clear tasks when the script exits
 def cleanup():
@@ -31,11 +38,11 @@ def handle_ctrl_c(signum, frame):
 signal.signal(signal.SIGINT, handle_ctrl_c)
 
 
-options = default_main()
-save_yaml(options)
-no_input_speed = not ('speed' in options['inputs'])
-flip_tunnel = make_flip_tunnel(
-    options,
-    test_mode=no_input_speed
-)
+#options = default_main()
+#save_yaml(options)
+#no_input_speed = not ('speed' in options['inputs'])
+#flip_tunnel = make_flip_tunnel(
+#    options,
+#    test_mode=no_input_speed
+#)
 flip_tunnel.run()
