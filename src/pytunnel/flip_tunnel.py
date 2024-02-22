@@ -579,6 +579,8 @@ class FlipTunnel:
         if self.use_sound:
             sound = self.sounds[mode]
 
+        print(length, tone_length, mode, self.use_sound)
+
         if self.isNIDaq:
             self.valveController.start()
             if self.use_sound:
@@ -698,7 +700,7 @@ class FlipTunnel:
             self.currentGoalIdx = (self.currentGoalIdx + 1) % self.goalNums
             print('next goal is set to {}'.format(self.currentGoalIdx))
         elif self.ruleName == 'run-auto' or self.ruleName == 'run-lick':
-            self.currentGoal = self.currentGoal + \
+            self.currentGoal = self.tunnel.position + self.total_forward_run_distance + \
                 np.random.randint(
                     10) + self.flip_tunnel_options['reward_distance']
         elif self.ruleName in ['protocol1_lv1', 'protocol1_lv2']:
@@ -717,6 +719,7 @@ class FlipTunnel:
         self.total_forward_run_distance += self.flip_tunnel_options['corridor_len']
 
     def stop_valve_task(self, task):
+        print('stop valve')
         self.valveController.stop()
 
     def stop_sound_task(self, task):
@@ -837,12 +840,14 @@ class FlipTunnel:
 
     def close(self):
         print('closing flip tunnel')
-        print(self.inputs.keys())
-        print(self.outputs.keys())
+        print('input', self.inputs.keys())
+        print('output', self.outputs.keys())
+        print('valve', self.valveController)
         for input in self.inputs.values():
             input.close()
         for output in self.outputs.values():
             output.close()
+        self.valveController.close()
 
     def position_logging_task(self, task):
         if not hasattr(task, 'next_log_time'):
