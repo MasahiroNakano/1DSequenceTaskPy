@@ -798,7 +798,7 @@ class FlipTunnel:
     #     return False
 
     def checkWithinGoal(self):
-        if self.ruleName in ['sequence', 'audio-guided-sequence', 'protocol5_lv3']:
+        if self.ruleName in ['sequence', 'audio-guided-sequence', 'protocol5_lv3', 'olfactory_support']:
             goals = self.goals[self.currentGoalIdx]
             position = self.tunnel.position
             if position > goals[0] and position < goals[1]:
@@ -856,7 +856,7 @@ class FlipTunnel:
         
 
     def checkWithinPreviousOrCurrentGoal(self):
-        if self.ruleName in ['sequence', 'audio-guided-sequence', 'protocol5_lv3']:
+        if self.ruleName in ['sequence', 'audio-guided-sequence', 'protocol5_lv3', 'olfactory_support']:
             position = self.tunnel.position
             # This is equal to subtracting one
             previousGoalIdx = (self.currentGoalIdx +
@@ -870,7 +870,7 @@ class FlipTunnel:
             return True
 
     def handleNextGoal(self):
-        if self.ruleName in ['sequence', 'audio-guided-sequence', 'protocol5_lv3']:
+        if self.ruleName in ['sequence', 'audio-guided-sequence', 'protocol5_lv3', 'olfactory_support']:
             self.currentGoalIdx = (self.currentGoalIdx + 1) % self.goalNums
             print('next goal is set to {}'.format(self.currentGoalIdx))
         elif self.ruleName == 'run-auto' or self.ruleName == 'run-lick':
