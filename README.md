@@ -36,6 +36,8 @@ source pytunnel_venv/bin/activate
 pip install -r requirements.txt
 ```
 
+Also, download texture files from [Google drive folder](https://drive.google.com/drive/folders/1nvpsYAwxkz1u-hsm_9j8Z8REkyzHmGd6?usp=sharing) and place them under `examples/textures`
+
 ## Usage
 
 To start a virtual corridor you need to:
