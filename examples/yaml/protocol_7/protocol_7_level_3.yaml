@@ -1,0 +1,89 @@
+texture_path: examples/textures/
+
+base_tunnel:
+    speed_gain: 0.7
+    eye_fov:
+        fov: 100 
+        fov_shift: 52
+    wall_model: 'walls.egg'
+    wall_length: 4.5
+    wall_spacing: 9
+
+card:
+    size: [0.2, 0.2]
+    position: [0.9, 0.9]
+
+flip_tunnel:
+    sleep_time: 0
+    stimulus_onset: 12
+    neutral_texture: grey.png
+    io_module: nidaq
+    length: 99
+    margin_start: 9
+    goals: [[12, 21], [66, 75], [30, 39]]
+    manual_reward_with_space: True
+    lock_corridor_reward: False
+    reward_length:
+        manual: 0.2
+        correct: 0.4
+        assist: 0.2
+        wrong: 0.3
+    landmarks: [[12, 21], [30, 39], [48, 57], [66, 75], [84, 93]]
+    sound_dir: 'examples/sounds/'
+    sounds:
+      0: '6kHz_tone.ogg'
+      1: '8kHz_tone.ogg'
+      2: '10kHz_tone.ogg'
+      3: '12kHz_tone.ogg'
+      4: '15kHz_tone.ogg'
+    no_reward_cue: True
+
+monitor:
+    dual_monitor: True
+    monitor1:
+        width: 1366
+    monitor2:
+        width: 1920
+        height: 1080
+    monitor3:
+        width: 1920
+        height: 1080
+
+logger:
+    foldername: 'D:\2024\masahiro\MN_1136505\240213'
+    box_number: '13'
+
+sequence_task:
+    rulename: 'sequence'
+    protocol: 'protocol_7_level_3'
+
+daqChannel:
+  valve1: Dev1/port0/line1
+  spout1: {chan: Dev1/ai10, min_value: 0, max_value: 10, threshold: 0.1}
+  
+walls_sequence:
+  - landmark5.jpg
+  - random_dots.png
+  - landmark1.jpg
+  - random_dots.png
+  - landmark2.jpg
+  - random_dots.png
+  - landmark3.jpg
+  - random_dots.png
+  - landmark4.jpg
+  - random_dots.png
+  - landmark5.jpg
+  - random_dots.png
+  - landmark1.jpg
+  - random_dots.png
+  - landmark2.jpg
+  - random_dots.png
+  - landmark3.jpg
+  - random_dots.png
+  - landmark4.jpg
+  - random_dots.png
+  
+inputs: 
+    speed: {chan: Dev1/ctr0, diameter: 0.197, pulses_per_rev: 1000, error_value: 4000000000, threshold: 0.001}
+
+outputs: {}

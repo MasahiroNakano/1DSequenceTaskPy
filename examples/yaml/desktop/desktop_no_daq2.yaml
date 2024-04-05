@@ -1,0 +1,62 @@
+texture_path: examples/textures/
+
+base_tunnel:
+    speed_gain: 0.01
+    eye_fov:
+        fov: 100 
+        fov_shift: 50
+    wall_model: 'walls.egg'
+    wall_length: 4.5
+    wall_spacing: 9
+
+card:
+    size: [0.2, 0.2]
+    position: [0.9, 0.9]
+
+flip_tunnel:
+    sleep_time: 0
+    stimulus_onset: 12
+    neutral_texture: grey.png
+    io_module: nidaq_stub
+    length: 99
+    margin_start: 9
+    goals: [[9, 18], [45, 54], [63, 72]]
+
+monitor:
+    dual_monitor: True
+    monitor1:
+        width: 400
+    monitor2:
+        width: 400
+        height: 300
+    monitor3:
+        width: 400
+        height: 300
+
+logger:
+    filename: '/home/masahiron/data'
+
+sequence_task:
+    rulename: 'sequence'
+
+walls_sequence:
+  - big_light_circles.png
+  - grating1.jpg
+  - big_dark_rectangles.png
+  - grating2.jpg
+  - big_light_rectangles.png
+  - big_light_circles.png
+  - grating1.jpg
+  - big_dark_rectangles.png
+  - random_dots.png
+  - grating2.jpg
+  - random_dots.png
+  - big_light_rectangles.png
+  - random_dots.png
+  - big_light_circles.png
+  - random_dots.png
+  - grating1.jpg
+  
+inputs: {}
+
+outputs: {}
