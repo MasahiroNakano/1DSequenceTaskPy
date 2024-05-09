@@ -1,0 +1,182 @@
+texture_path: examples/textures/
+
+base_tunnel:
+    speed_gain: 0.7
+    eye_fov:
+        fov: 100 
+        fov_shift: 52
+    wall_model: 'walls.egg'
+    wall_length: 4.5
+    wall_spacing: 9
+
+card:
+    size: [0.2, 0.2]
+    position: [0.9, 0.9]
+
+flip_tunnel:
+    sleep_time: 0
+    stimulus_onset: 12
+    neutral_texture: grey.png
+    io_module: nidaq
+    length: 902
+    margin_start: 9
+    goals: [[83, 92],[173, 182], [263, 272], [353, 362], [443, 452], [533, 542], [623, 632], [713, 722], [803, 812], [893, 902]]
+    # assisted_goals: [[54, 55],[144, 145], [234, 235], [324, 325], [414, 415], [504, 505], [594, 595], [684, 685], [774, 775], [864, 865]]
+    manual_reward_with_space: True
+    lock_corridor_reward: False
+    reward_length:
+        manual: 0.2
+        correct: 0.3
+        assist: 0.2
+        wrong: 0.3
+    reward_prob: 0.5
+    landmarks: [[83, 92],[173, 182], [263, 272], [353, 362], [443, 452], [533, 542], [623, 632], [713, 722], [803, 812], [893, 902]]
+    speed_threshold: [0.0 0.1] #m/s
+
+monitor:
+    dual_monitor: True
+    monitor1:
+        width: 1366
+    monitor2:
+        width: 1920
+        height: 1080
+    monitor3:
+        width: 1920
+        height: 1080
+
+# logger:
+#     foldername: 'D:\2024\sandra\MN_1136993\20240401'
+#     box_number: '9'
+
+sequence_task:
+    rulename: 'olfactory_shaping1'
+    protocol: 'olfactory_shaping1'
+
+daqChannel:
+  valve1: Dev1/port0/line1
+  spout1: {chan: Dev1/ai10, min_value: 0, max_value: 10, threshold: 0.08}
+  odour1: Dev1/port0/line5
+  odour2: Dev1/port0/line2
+  odour3: Dev1/port0/line7
+  odour4: Dev1/port0/line3
+  odour5: Dev1/port0/line4
+  odour6: Dev1/port0/line0
+  finalV1: Dev1/port1/line0 #final valve modd 1
+  odour7: Dev1/port2/line6
+  odour8: Dev1/port2/line5
+  odour9: Dev1/port2/line4
+  odour10: Dev1/port1/line7
+  odour11: Dev1/port1/line6
+  odour12: Dev1/port1/line4
+  finalV2: Dev1/port1/line3 #final valve modd 2
+  fiveV: Dev1/port1/line1 #5way (switch between modd 1 and 2)
+  threeV: Dev1/port1/line2 #3way 1
+  threeV2: Dev1/port2/line3 #3way 2
+
+  
+walls_sequence:
+  - grass.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - bark.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - leaves.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - logs.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - honeycomb.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - tiles.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - leaves.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - grating1.jpg
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - big_dark_rectangles.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - big_light_circles.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  
+inputs: 
+    speed: {chan: Dev1/ctr0, diameter: 0.197, pulses_per_rev: 1000, error_value: 4000000000, threshold: 0.001}
+
+outputs: {}

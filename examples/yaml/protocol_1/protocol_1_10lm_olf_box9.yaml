@@ -26,10 +26,11 @@ flip_tunnel:
         correct: 0.3
         assist: 0.2
         wrong: 0.3
+    reward_prob: 1
     goals: [[21, 30], [129, 138], [75, 84], [57, 66]]
     # assisted_goals: [[26, 27], [134, 135], [80, 81], [62, 63]]
-    # landmarks: [[12, 21], [30, 39], [48, 57], [66, 75], [84, 93], [102, 111], [120, 129], [138, 147], [156, 164], [173, 182]]
-    landmarks: [[21, 30], [75, 84], [93, 102], [111, 120], [129, 138], [147, 156]]
+    landmarks: [[21, 30], [39, 48], [57, 66], [75, 84], [93, 102], [111, 120], [129, 138], [147, 156], [164, 173], [182, 191]]
+    #landmarks: [[21, 30], [75, 84], [93, 102], [111, 120], [129, 138], [147, 156]]
     manual_reward_with_space: True
 
 monitor:
@@ -60,9 +61,17 @@ daqChannel:
   odour4: Dev1/port0/line3
   odour5: Dev1/port0/line4
   odour6: Dev1/port0/line0
-  finalV: Dev1/port1/line0 #final valve
-  fiveV: Dev1/port1/line1 #5way
-  threeV: Dev1/port1/line2 #3way
+  finalV1: Dev1/port1/line0 #final valve modd 1
+  odour7: Dev1/port2/line6
+  odour8: Dev1/port2/line5
+  odour9: Dev1/port2/line4
+  odour10: Dev1/port1/line7
+  odour11: Dev1/port1/line6
+  odour12: Dev1/port1/line4
+  finalV2: Dev1/port1/line3 #final valve modd 2
+  fiveV: Dev1/port1/line1 #5way (switch between modd 1 and 2)
+  threeV: Dev1/port1/line2 #3way 1
+  threeV2: Dev1/port2/line3 #3way 2
 
   
 walls_sequence:
