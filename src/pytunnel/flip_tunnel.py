@@ -255,13 +255,14 @@ class FlipTunnel:
 
         self.odour_prepped = False
         self.olf_done = False
+        self.flush_done = True
 
         self.current_landmark = 0
 
         try:
-            self.assist_reward_prob = options['flip_tunnel']['assist_reward_prob']
+            self.reward_prob = options['flip_tunnel']['reward_prob']
         except:
-            self.assist_reward_prob = 1
+            self.reward_prob = 1
         try:
             self.assist_sound_volume = options['flip_tunnel']['assist_sound_volume']
         except:
@@ -386,21 +387,16 @@ class FlipTunnel:
             pass
 
         self.odour_diffs = {
-            'final-five': 1,
-            'three-flush': 2,
-            'three': 0.2}
+            'final-five': 0,
+            'landmark': 2,
+            'flush':1,
+            'odour_overlap': 0.05}
         
         try:
             self.odour_diffs.update(options['flip_tunnel']['odour_diffs'])
         except:
             pass
         
-        self.odour_prep_distance = 9
-
-        try:
-            self.odour_prep_distance.update(options['flip_tunnel']['odour_prep_distance'])
-        except:
-            pass
 
         self.sound_mode = 'correct'
 
@@ -495,11 +491,18 @@ class FlipTunnel:
             self.isChallenged = False
             self.wasChallenged = True
             if self.checkWithinGoal():
-                print('correct! Getting reward...')
-                self.wasRewarded = True
-                # either correct or wrong
-                self.triggerReward(mode=self.sound_mode)
-                self.handleNextGoal()
+                #implement a coin flip to determine if the reward is given
+                if np.random.rand() <= self.reward_prob:
+                    print('correct! Getting reward...')
+                    self.wasRewarded = True
+                    # either correct or wrong
+                    self.triggerReward(mode=self.sound_mode)
+                    self.handleNextGoal()
+                else:
+                    print('unlucky! Getting no reward...')
+                    self.wasRewarded = False
+                    self.handleNextGoal()
+                
 
         if self.ruleName in ['run-auto', 'protocol1_lv1']:
             pos = self.tunnel.position
@@ -522,7 +525,7 @@ class FlipTunnel:
         position = self.tunnel.position
         if position > goals[0] and position < goals[1]:
             if self.ruleName in ['protocol5_lv3']:
-                if np.random.rand() <= self.assist_reward_prob:
+                if np.random.rand() <= self.reward_prob:
                     print('Getting reward with assist')
                     self.wasAssistRewarded = True
                     self.triggerReward(mode='assist')
@@ -585,14 +588,14 @@ class FlipTunnel:
         landmarks = self.landmarks[self.currentLMIdx]
         prep_index = -1
         
-        if not self.odour_prepped:
+        if not self.odour_prepped and self.flush_done:
             self.prepOdourStim(odour=self.currentLMIdx)
             self.odour_prepped = True
 
         if position > landmarks[0] and position < landmarks[1]:
             prep_index = self.currentLMIdx
 
-        if prep_index != -1 and not self.olf_done:
+        if prep_index != -1 and not self.olf_done and self.odour_prepped:
             self.olf_done = True
             self.triggerOdourOn(odour=prep_index)
             self.flush_odour(odour=self.currentLMIdx)
@@ -664,101 +667,204 @@ class FlipTunnel:
     
     def prepOdourStim(self,odour):
         if self.isNIDaq:
-
-            time_diff = self.odour_diffs['final-five']
-            print('prepping odour {}'.format(odour))
-            print('opening final valve')
-            self.finalvalvecontroller.start()
-
-            if odour == 0:
-                self.odourcontroller1.start()
-                print('opened odour valve {}'.format(odour))
-            elif odour == 1:
-                self.odourcontroller2.start()
-                print('opened odour valve {}'.format(odour))
-            elif odour == 2:
-                self.odourcontroller3.start()
-                print('opened odour valve {}'.format(odour))
-            elif odour == 3:
-                self.odourcontroller4.start()
-                print('opened odour valve {}'.format(odour))
-            elif odour == 4:
-                self.odourcontroller5.start()
-                print('opened odour valve {}'.format(odour))
-            elif odour == 5:
-                self.odourcontroller6.start()
-                print('opened odour valve {}'.format(odour))
+            
+            if odour in [0,2,4,6,8]:
+                self.threevalve2controller.stop()
+                print('closing 3way valve 2')
             else:
-                print('no corresponding valve found, no odour')
+                self.threevalvecontroller.stop()
+                print('closing 3way valve 1')
+            self.odourcontroller6.stop()
+            self.odourcontroller12.stop()
 
-            print('opening 5way after {}'.format(time_diff))
+            # if odour == 0:
+            #     self.finalvalve2controller.stop()
+            #     self.finalvalve1controller.start()
+            #     self.odourcontroller1.start()
+            #     print('opened odour valve 1')
+            # elif odour == 1:
+            #     self.finalvalve1controller.stop()
+            #     self.finalvalve2controller.start()
+            #     self.odourcontroller2.start()
+            #     print('opened odour valve 2')
+            # elif odour == 2:
+            #     self.finalvalve2controller.stop()
+            #     self.finalvalve1controller.start()
+            #     self.odourcontroller3.start()
+            #     print('opened odour valve 3')
+            # elif odour == 3:
+            #     self.finalvalve1controller.stop()
+            #     self.finalvalve2controller.start()
+            #     self.odourcontroller4.start()
+            #     print('opened odour valve 4')
+            # elif odour == 4:
+            #     self.finalvalve2controller.stop()
+            #     self.finalvalve1controller.start()
+            #     self.odourcontroller5.start()
+            #     print('opened odour valve 5')
+            # elif odour == 5:
+            #     self.finalvalve1controller.stop()
+            #     self.finalvalve2controller.start()
+            #     self.odourcontroller7.start()
+            #     print('opened odour valve 7')
+            # elif odour == 6:
+            #     self.finalvalve2controller.stop()
+            #     self.finalvalve1controller.start()
+            #     self.odourcontroller8.start()
+            #     print('opened odour valve 8')
+            # elif odour == 7:
+            #     self.finalvalve1controller.stop()
+            #     self.finalvalve2controller.start()
+            #     self.odourcontroller9.start()
+            #     print('opened odour valve 9')
+            # elif odour == 8:
+            #     self.finalvalve2controller.stop()
+            #     self.finalvalve1controller.start()
+            #     self.odourcontroller10.start()
+            #     print('opened odour valve 10')
+            # elif odour == 9:
+            #     self.finalvalve1controller.stop()
+            #     self.finalvalve2controller.start()
+            #     self.odourcontroller11.start()
+            #     print('opened odour valve 11')
+            # else:
+            #     print('no corresponding valve found, no odour')
 
-            self.tunnel.taskMgr.doMethodLater(
-                        time_diff, self.start_five_valve, 'start_five_valve'
-                    )
+            self.flush_done = False
+            if odour in [0,2,4,6,8]:
+                self.fivevalvecontroller.start()
+                print('opening 5way valve to position A')
+            else:
+                self.fivevalvecontroller.stop()
+                print('opening 5way valve to position B')
         else:
             print(self.tunnel.position)
             print('prepping odour {}'.format(odour))
-            print('opening 5way after {}'.format(time_diff))
 
 
     def triggerOdourOn(self,odour):
 
         if self.isNIDaq:
-
-            self.threevalvecontroller.start()
+            
+            if odour in [0,2,4,6,8]:
+                self.threevalvecontroller.start()
+            else:
+                self.threevalve2controller.start()
             print(self.tunnel.position)
             print('odour {} is triggered'.format(odour))
-            print('closing after {}'.format(self.odour_diffs['three']))
+            print('closing after {}'.format(self.odour_diffs['odour_overlap']))
             self.tunnel.taskMgr.doMethodLater(
-                        self.odour_diffs['three'], self.stop_three_valve, 'stop_three_valve'
-                    )     
+                        self.odour_diffs['odour_overlap'], self.stop_odour_valve, 'stop_odour_valve'
+                    ) 
+            if odour in [0,2,4,6,8]:
+                print('opening mineral oil modd 1')
+                self.odourcontroller6.start() #mineral oil modd 1
+            else:
+                print('opening mineral oil modd 2')
+                self.odourcontroller12.start() #mineral oil modd 2
+                
         else:
             print(self.tunnel.position)
-            print('triggering odour stimulation for {}'.format(self.odour_diffs['three']))
+            print('triggering odour stimulation for {}'.format(self.odour_diffs['odour_overlap']))        
 
-
-            
-    def start_five_valve(self,odour):
-        print('opening 5way valve')
-        self.fivevalvecontroller.start()
-    
-    def stop_five_valve(self,odour):
-        print('closing 5way valve')
-        self.fivevalvecontroller.stop()
-        print('closing final valve')
-        self.finalvalvecontroller.stop()
     
     def stop_three_valve(self,odour):
-        print('closing 3way valve')
-        self.threevalvecontroller.stop()
+        odour = self.currentLMIdx
+        
+        if odour in [0,2,4,6,8]:
+            self.threevalvecontroller.stop()
+            print('closing 3way valve 1')
+        else:
+            self.threevalve2controller.stop()
+            print('closing 3way valve 2')
+        self.flush_done = True
+        self.olf_done = False
+        self.odour_prepped = False
+
+    
+    def stop_odour_valve(self,odour):
+        print('closing odour valve')
+        
+        self.odourcontroller1.stop()
+        self.odourcontroller2.stop()
+        self.odourcontroller3.stop()
+        self.odourcontroller4.stop()
+        self.odourcontroller5.stop()
+        self.odourcontroller7.stop()
+        self.odourcontroller8.stop()
+        self.odourcontroller9.stop()
+        self.odourcontroller10.stop()
+        self.odourcontroller11.stop()
+    
+    def load_next_odour(self,odour):
+        odour = self.currentLMIdx + 1
+        if odour > 9:
+            odour = 0
+    
         if odour == 0:
-            self.odourcontroller1.stop()
-            print('closing odour {}'.format(odour))
+            self.finalvalve2controller.stop()
+            self.finalvalve1controller.start()
+            self.odourcontroller1.start()
+            print('opened odour valve 1')
         elif odour == 1:
-            self.odourcontroller2.stop()
-            print('closing odour {}'.format(odour))
+            self.finalvalve1controller.stop()
+            self.finalvalve2controller.start()
+            self.odourcontroller2.start()
+            print('opened odour valve 2')
         elif odour == 2:
-            self.odourcontroller3.stop()
-            print('closing odour {}'.format(odour))
+            self.finalvalve2controller.stop()
+            self.finalvalve1controller.start()
+            self.odourcontroller3.start()
+            print('opened odour valve 3')
         elif odour == 3:
-            self.odourcontroller4.stop()
-            print('closing odour {}'.format(odour))
+            self.finalvalve1controller.stop()
+            self.finalvalve2controller.start()
+            self.odourcontroller4.start()
+            print('opened odour valve 4')
         elif odour == 4:
-            self.odourcontroller5.stop()
-            print('closing odour {}'.format(odour))
+            self.finalvalve2controller.stop()
+            self.finalvalve1controller.start()
+            self.odourcontroller5.start()
+            print('opened odour valve 5')
         elif odour == 5:
-            self.odourcontroller6.stop()
-            print('closing odour {}'.format(odour))
+            self.finalvalve1controller.stop()
+            self.finalvalve2controller.start()
+            self.odourcontroller7.start()
+            print('opened odour valve 7')
+        elif odour == 6:
+            self.finalvalve2controller.stop()
+            self.finalvalve1controller.start()
+            self.odourcontroller8.start()
+            print('opened odour valve 8')
+        elif odour == 7:
+            self.finalvalve1controller.stop()
+            self.finalvalve2controller.start()
+            self.odourcontroller9.start()
+            print('opened odour valve 9')
+        elif odour == 8:
+            self.finalvalve2controller.stop()
+            self.finalvalve1controller.start()
+            self.odourcontroller10.start()
+            print('opened odour valve 10')
+        elif odour == 9:
+            self.finalvalve1controller.stop()
+            self.finalvalve2controller.start()
+            self.odourcontroller11.start()
+            print('opened odour valve 11')
+        else:
+            print('no corresponding valve found, no odour')
         
 
     def flush_odour(self,odour):
-        print('flushing tubing for {}'.format(self.odour_diffs['three-flush']))
+        print('presenting odour for {}'.format(self.odour_diffs['landmark']))
         self.tunnel.taskMgr.doMethodLater(
-                        self.odour_diffs['three-flush'], self.stop_five_valve, 'stop_five_valve'
+                        self.odour_diffs['landmark'], self.load_next_odour, 'load_next_odour'
                     )
-        self.olf_done = False
-        self.odour_prepped = False
+        print('flushing odour for another {}'.format(self.odour_diffs['flush']))
+        self.tunnel.taskMgr.doMethodLater(
+                        self.odour_diffs['flush'], self.stop_three_valve, 'stop_three_valve'
+                    )
+
 
     def triggerAirpuff(self):
         if self.isNIDaq:
@@ -804,7 +910,7 @@ class FlipTunnel:
             if position > goals[0] and position < goals[1]:
                 return True
             return False
-        elif self.ruleName in ['all']:
+        elif self.ruleName in ['all', 'olfactory_shaping1']:
             position = self.tunnel.position
             for goals in self.goals:
                 if position > goals[0] and position < goals[1]:
@@ -988,12 +1094,28 @@ class FlipTunnel:
                     options['daqChannel']['odour5'])
                 self.odourcontroller6 = nidaq.DigitalOutput(
                     options['daqChannel']['odour6'])
-                self.finalvalvecontroller = nidaq.DigitalOutput(
-                    options['daqChannel']['finalV'])
+                self.finalvalve1controller = nidaq.DigitalOutput(
+                    options['daqChannel']['finalV1'])
+                self.odourcontroller7 = nidaq.DigitalOutput(
+                    options['daqChannel']['odour7'])
+                self.odourcontroller8 = nidaq.DigitalOutput(
+                    options['daqChannel']['odour8'])
+                self.odourcontroller9 = nidaq.DigitalOutput(
+                    options['daqChannel']['odour9'])
+                self.odourcontroller10 = nidaq.DigitalOutput(
+                    options['daqChannel']['odour10'])
+                self.odourcontroller11 = nidaq.DigitalOutput(
+                    options['daqChannel']['odour11'])
+                self.odourcontroller12 = nidaq.DigitalOutput(
+                    options['daqChannel']['odour12'])
+                self.finalvalve2controller = nidaq.DigitalOutput(
+                    options['daqChannel']['finalV2'])
                 self.fivevalvecontroller = nidaq.DigitalOutput(
                     options['daqChannel']['fiveV'])
                 self.threevalvecontroller = nidaq.DigitalOutput(
                     options['daqChannel']['threeV'])
+                self.threevalve2controller = nidaq.DigitalOutput(
+                    options['daqChannel']['threeV2'])
                 self.isOdourStim = True
 
 
@@ -1053,15 +1175,40 @@ class FlipTunnel:
             output.close()
         self.valveController.close()
         if self.isOdourStim:
+            self.odourcontroller1.stop()
+            self.odourcontroller2.stop()
+            self.odourcontroller3.stop()
+            self.odourcontroller4.stop()
+            self.odourcontroller5.stop()
+            self.odourcontroller6.stop()
+            self.finalvalve1controller.stop()
+            self.fivevalvecontroller.stop()
+            self.threevalvecontroller.stop()
             self.odourcontroller1.close()
             self.odourcontroller2.close()
             self.odourcontroller3.close()
             self.odourcontroller4.close()
             self.odourcontroller5.close()
             self.odourcontroller6.close()
-            self.finalvalvecontroller.close()
+            self.finalvalve1controller.close()
             self.fivevalvecontroller.close()
             self.threevalvecontroller.close()
+            self.odourcontroller7.stop()
+            self.odourcontroller8.stop()
+            self.odourcontroller9.stop()
+            self.odourcontroller10.stop()
+            self.odourcontroller11.stop()
+            self.odourcontroller12.stop()
+            self.finalvalve2controller.stop()
+            self.threevalve2controller.stop()
+            self.odourcontroller7.close()
+            self.odourcontroller8.close()
+            self.odourcontroller9.close()
+            self.odourcontroller10.close()
+            self.odourcontroller11.close()
+            self.odourcontroller12.close()
+            self.finalvalve2controller.close()
+            self.threevalve2controller.close()
 
     def position_logging_task(self, task):
         if not hasattr(task, 'next_log_time'):
