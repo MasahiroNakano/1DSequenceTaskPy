@@ -15,6 +15,7 @@ from base_tunnel import BaseTunnel
 from misc import default_main
 import time
 
+from collections import deque
 
 class Flipper:
 
@@ -243,6 +244,8 @@ class FlipTunnel:
             manual_reward_with_space = False
 
         self.ruleName = options['sequence_task']['rulename']
+        
+        self.speed_history = deque(maxlen=30) #half a second
 
         self.isChallenged = False
         self.wasChallenged = False
@@ -284,6 +287,10 @@ class FlipTunnel:
             self.no_reward_cue = options['flip_tunnel']['no_reward_cue']
         except:
             self.no_reward_cue = False
+        try:
+            self.speed_limit = options['flip_tunnel']['speed_limit']
+        except:
+            self.speed_limit = -1
 
         self.isLogging = False
 
@@ -652,19 +659,37 @@ class FlipTunnel:
     #         print('true')
     #         return True
     #     return False
+    
+    def checkSpeedLimit(self, threshold):
+        print('current speed: {}, speed limit : {}'.format(np.round(self.avg_speed, 1), threshold))
+        return self.avg_speed < threshold
+        
 
     def checkWithinGoal(self):
+        # self.checkSpeedLimit(self.speed_limit)
         if self.ruleName in ['sequence', 'audio-guided-sequence', 'protocol5_lv3']:
             goals = self.goals[self.currentGoalIdx]
             position = self.tunnel.position
             if position > goals[0] and position < goals[1]:
-                return True
+                if self.speed_limit != -1:
+                    if self.checkSpeedLimit(self.speed_limit):
+                        return True
+                    else:
+                        return False
+                else:
+                    return True
             return False
         elif self.ruleName in ['all']:
             position = self.tunnel.position
             for goals in self.goals:
                 if position > goals[0] and position < goals[1]:
-                    return True
+                    if self.speed_limit != -1:
+                        if self.checkSpeedLimit(self.speed_limit):
+                            return True
+                        else:
+                            return False
+                    else:
+                        return True
             return False
         elif self.ruleName in ['protocol1_lv2']:
             position = self.tunnel.position
@@ -672,7 +697,13 @@ class FlipTunnel:
                 for goals in self.goals:
                     if position > goals[0] and position < goals[1]:
 
-                        return True
+                        if self.speed_limit != -1:
+                            if self.checkSpeedLimit(self.speed_limit):
+                                return True
+                            else:
+                                return False
+                        else:
+                            return True
             return False
         elif self.ruleName in ['run-lick']:
             print(self.tunnel.position +
@@ -807,6 +838,7 @@ class FlipTunnel:
 
         self.logger.info("speed: %f", speed)
         self.tunnel.speed = speed
+        self.speed_history.append(speed)
 
         return Task.cont
 
@@ -892,6 +924,11 @@ class FlipTunnel:
         self.sample_i += 1
 
         return Task.cont
+    
+    @property
+    def avg_speed(self):
+        speed = np.mean(self.speed_history) * 60
+        return speed
 
     # def event_logging_task(self, task):
     #     if self.wasChallenged:
