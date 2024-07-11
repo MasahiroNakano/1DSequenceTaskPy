@@ -1,7 +1,7 @@
 texture_path: examples/textures/
 
 base_tunnel:
-    speed_gain: 0.4
+    speed_gain: 1
     eye_fov:
         fov: 100 
         fov_shift: 57
@@ -18,7 +18,7 @@ flip_tunnel:
     stimulus_onset: 12
     neutral_texture: grey.png
     io_module: nidaq
-    length: 182
+    length: 200
     margin_start: 9
     reward_distance: 9
     reward_length:
@@ -27,11 +27,14 @@ flip_tunnel:
         assist: 0.2
         wrong: 0.3
     reward_prob: 1
-    goals: [[21, 30], [129, 138], [75, 84], [57, 66]]
-    # assisted_goals: [[26, 27], [134, 135], [80, 81], [62, 63]]
+    # goals: [[39, 48], [147, 156], [93, 102], [75, 84]] # 2 8 5 4
+    # assisted_goals: [[46, 47], [154, 155], [100, 101], [82, 83]]
+    goals: [[57, 66], [182, 191], [111, 120], [129, 138]] # 3 10 6 7
+    # assisted_goals: [[64, 65], [189, 190], [118, 119], [136, 137]]
     landmarks: [[21, 30], [39, 48], [57, 66], [75, 84], [93, 102], [111, 120], [129, 138], [147, 156], [164, 173], [182, 191]]
     #landmarks: [[21, 30], [75, 84], [93, 102], [111, 120], [129, 138], [147, 156]]
     manual_reward_with_space: True
+    speed_limit: 8 #cm/s set to -1 to disable
 
 monitor:
     dual_monitor: True
@@ -44,9 +47,9 @@ monitor:
         width: 1920
         height: 1080
 
-# logger:
-#     foldername: 'D:\2024\sandra\sample\test1'
-#     box_number: '9'
+logger:
+    foldername: 'D:\2024\sandra\SR_0000013\240711'
+    box_number: '9'
 
 sequence_task:
     rulename: 'olfactory_support'
@@ -55,26 +58,28 @@ sequence_task:
 daqChannel:
   valve1: Dev1/port0/line1
   spout1: {chan: Dev1/ai10, min_value: 0, max_value: 10, threshold: 0.07}
-  odour1: Dev1/port0/line5
-  odour2: Dev1/port0/line2
-  odour3: Dev1/port0/line7
-  odour4: Dev1/port0/line3
-  odour5: Dev1/port0/line4
-  odour6: Dev1/port0/line0
+  odour1: Dev1/port2/line4 #test: Dev1/port0/line0 interleave: Dev1/port2/line5
+  odour2: Dev1/port0/line4 #test: Dev1/port0/line0 
+  odour3: Dev1/port1/line7 #test: Dev1/port0/line0 interleave: Dev1/port1/line7
+  odour4: Dev1/port0/line7 #test: Dev1/port0/line0 
+  odour5: Dev1/port1/line6 #test: Dev1/port0/line0 
+  odour7: Dev1/port0/line2 #test: Dev1/port0/line0 interleave: Dev1/port0/line2
+  odour8: Dev1/port2/line5 #test: Dev1/port0/line0 
+  odour9: Dev1/port0/line3 #test: Dev1/port0/line0 interleave: Dev1/port0/line3
+  odour10: Dev1/port1/line4 #test: Dev1/port0/line0
+  odour11: Dev1/port0/line5 #test: Dev1/port0/line0
+  mo1: Dev1/port0/line0
+  mo2: Dev1/port2/line6
   finalV1: Dev1/port1/line0 #final valve modd 1
-  odour7: Dev1/port2/line6
-  odour8: Dev1/port2/line5
-  odour9: Dev1/port2/line4
-  odour10: Dev1/port1/line7
-  odour11: Dev1/port1/line6
-  odour12: Dev1/port1/line4
   finalV2: Dev1/port1/line3 #final valve modd 2
-  fiveV: Dev1/port1/line1 #5way (switch between modd 1 and 2)
+  fiveV: Dev1/port1/line1 #5way (switch between modd 1 and 2) -> removed, only for flow calib
   threeV: Dev1/port1/line2 #3way 1
   threeV2: Dev1/port2/line3 #3way 2
 
   
 walls_sequence:
+  - random_dots.png
+  - random_dots.png
   - random_dots.png
   - logs.png
   - random_dots.png
@@ -82,9 +87,9 @@ walls_sequence:
   - random_dots.png
   - tiles.png
   - random_dots.png
-  - grass.png
-  - random_dots.png
   - big_light_rectangles.png
+  - random_dots.png
+  - grass.png
   - random_dots.png
   - honeycomb.png
   - random_dots.png
@@ -96,6 +101,7 @@ walls_sequence:
   - random_dots.png
   - big_light_circles.png
   - random_dots.png
+
   
 inputs: 
     speed: {chan: Dev1/ctr0, diameter: 0.197, pulses_per_rev: 1000, error_value: 4000000000, threshold: 0.001}

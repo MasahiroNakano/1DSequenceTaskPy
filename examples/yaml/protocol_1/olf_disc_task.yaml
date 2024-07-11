@@ -1,7 +1,7 @@
 texture_path: examples/textures/
 
 base_tunnel:
-    speed_gain: 0.7
+    speed_gain: 1
     eye_fov:
         fov: 100 
         fov_shift: 52
@@ -30,6 +30,7 @@ flip_tunnel:
         assist: 0.2
         wrong: 0.3
     landmarks: [[48, 57],[84, 93],[138, 147],[173, 182]]
+    speed_limit: 8
 
 monitor:
     dual_monitor: True
@@ -43,7 +44,7 @@ monitor:
         height: 1080
 
 logger:
-    foldername: 'D:\2024\sandra\MN_1136993\20240401'
+    foldername: 'D:\2024\sandra\SR_0000009\240711'
     box_number: '9'
 
 sequence_task:
@@ -52,55 +53,63 @@ sequence_task:
 
 daqChannel:
   valve1: Dev1/port0/line1
-  spout1: {chan: Dev1/ai10, min_value: 0, max_value: 10, threshold: 0.08}
-  odour1: Dev1/port0/line2
-  odour2: Dev1/port0/line7
-  odour3: Dev1/port0/line2
-  odour4: Dev1/port0/line7
-  odour5: Dev1/port0/line3
-  odour6: Dev1/port0/line0
-  finalV: Dev1/port1/line0 #final valve
-  fiveV: Dev1/port1/line1 #5way
-  threeV: Dev1/port1/line2 #3way
+  spout1: {chan: Dev1/ai10, min_value: 0, max_value: 10, threshold: 0.07}
+  odour1: Dev1/port0/line7 #goal 1, valve 1_4 odour 13
+  odour2: Dev1/port2/line4 #distractor 1,  valve 2_3, odour 11
+  odour3: Dev1/port0/line7 #goal 2
+  odour4: Dev1/port2/line4 #distractor 2
+  odour5: Dev1/port0/line7
+  odour7: Dev1/port0/line7
+  odour8: Dev1/port2/line4
+  odour9: Dev1/port0/line7
+  odour10: Dev1/port2/line4
+  odour11: Dev1/port0/line7
+  mo1: Dev1/port0/line0
+  mo2: Dev1/port2/line6
+  finalV1: Dev1/port1/line0 #final valve modd 1
+  finalV2: Dev1/port1/line3 #final valve modd 2
+  fiveV: Dev1/port1/line1 #5way -> old
+  threeV: Dev1/port1/line2 #3way 1
+  threeV2: Dev1/port2/line3 #3way 2
 
   
 walls_sequence:
-  - grass.png
+  - logs.png
   - random_dots.png
   - random_dots.png
   - random_dots.png
   - random_dots.png
   - random_dots.png
-  - landmark3.jpg
+  - big_dark_rectangles.png
   - random_dots.png
   - random_dots.png
   - random_dots.png
-  - grass.png
-  - random_dots.png
-  - random_dots.png
-  - random_dots.png
-  - random_dots.png
-  - random_dots.png
-  - landmark3.jpg
-  - random_dots.png
-  - random_dots.png
-  - random_dots.png
-  - grass.png
-  - random_dots.png
-  - random_dots.png
-  - random_dots.png
-  - random_dots.png
-  - landmark3.jpg
-  - random_dots.png
-  - random_dots.png
-  - random_dots.png
-  - grass.png
+  - logs.png
   - random_dots.png
   - random_dots.png
   - random_dots.png
   - random_dots.png
   - random_dots.png
-  - landmark3.jpg
+  - big_dark_rectangles.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - logs.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - big_dark_rectangles.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - logs.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - big_dark_rectangles.png
   - random_dots.png
   - random_dots.png
   - random_dots.png

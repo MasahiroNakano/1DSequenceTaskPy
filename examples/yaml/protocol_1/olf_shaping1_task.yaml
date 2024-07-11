@@ -1,7 +1,7 @@
 texture_path: examples/textures/
 
 base_tunnel:
-    speed_gain: 0.7
+    speed_gain: 2
     eye_fov:
         fov: 100 
         fov_shift: 52
@@ -18,20 +18,23 @@ flip_tunnel:
     stimulus_onset: 12
     neutral_texture: grey.png
     io_module: nidaq
-    length: 902
+    length: 911
     margin_start: 9
     goals: [[83, 92],[173, 182], [263, 272], [353, 362], [443, 452], [533, 542], [623, 632], [713, 722], [803, 812], [893, 902]]
-    # assisted_goals: [[54, 55],[144, 145], [234, 235], [324, 325], [414, 415], [504, 505], [594, 595], [684, 685], [774, 775], [864, 865]]
+    # assisted_goals: [[91, 92],[181, 182], [271, 272], [361, 362], [451, 452], [541, 542], [631, 632], [721, 722], [811, 812], [901, 902]]
+    # assisted_goals: [[85, 86],[175, 176], [265, 266], [355, 356], [445, 446], [535, 536], [625, 626], [715, 716], [805, 806], [895, 896]]
+    assisted_goals: [[94, 95],[184, 185], [274, 275], [364, 365], [454, 455], [544, 545], [634, 635], [724, 725], [814, 815], [904, 905]]
     manual_reward_with_space: True
     lock_corridor_reward: False
     reward_length:
         manual: 0.2
         correct: 0.3
-        assist: 0.2
+        # assist: 0.2
+        assist: 0
         wrong: 0.3
     reward_prob: 0.5
     landmarks: [[83, 92],[173, 182], [263, 272], [353, 362], [443, 452], [533, 542], [623, 632], [713, 722], [803, 812], [893, 902]]
-    speed_threshold: [0.0 0.1] #m/s
+    speed_limit: 5 #cm/s set to -1 to disable, switch assist off for this.. makes no sense otherwise
 
 monitor:
     dual_monitor: True
@@ -44,9 +47,9 @@ monitor:
         width: 1920
         height: 1080
 
-# logger:
-#     foldername: 'D:\2024\sandra\MN_1136993\20240401'
-#     box_number: '9'
+logger:
+    foldername: 'D:\2024\sandra\SR_0000009\240705'
+    box_number: '9'
 
 sequence_task:
     rulename: 'olfactory_shaping1'
@@ -54,48 +57,28 @@ sequence_task:
 
 daqChannel:
   valve1: Dev1/port0/line1
-  spout1: {chan: Dev1/ai10, min_value: 0, max_value: 10, threshold: 0.08}
-  odour1: Dev1/port0/line5
-  odour2: Dev1/port0/line2
-  odour3: Dev1/port0/line7
-  odour4: Dev1/port0/line3
-  odour5: Dev1/port0/line4
-  odour6: Dev1/port0/line0
+  spout1: {chan: Dev1/ai10, min_value: 0, max_value: 10, threshold: 0.07}
+  odour1: Dev1/port2/line4 #test: Dev1/port0/line0 interleave: Dev1/port2/line5
+  odour2: Dev1/port0/line4 #test: Dev1/port0/line0 
+  odour3: Dev1/port1/line7 #test: Dev1/port0/line0 interleave: Dev1/port1/line7
+  odour4: Dev1/port0/line7 #test: Dev1/port0/line0 
+  odour5: Dev1/port1/line6 #test: Dev1/port0/line0 
+  odour7: Dev1/port0/line2 #test: Dev1/port0/line0 interleave: Dev1/port0/line2
+  odour8: Dev1/port2/line5 #test: Dev1/port0/line0 
+  odour9: Dev1/port0/line3 #test: Dev1/port0/line0 interleave: Dev1/port0/line3
+  odour10: Dev1/port1/line4 #test: Dev1/port0/line0
+  odour11: Dev1/port0/line5 #test: Dev1/port0/line0
+  mo1: Dev1/port0/line0
+  mo2: Dev1/port2/line6
   finalV1: Dev1/port1/line0 #final valve modd 1
-  odour7: Dev1/port2/line6
-  odour8: Dev1/port2/line5
-  odour9: Dev1/port2/line4
-  odour10: Dev1/port1/line7
-  odour11: Dev1/port1/line6
-  odour12: Dev1/port1/line4
   finalV2: Dev1/port1/line3 #final valve modd 2
-  fiveV: Dev1/port1/line1 #5way (switch between modd 1 and 2)
+  fiveV: Dev1/port1/line1 #5way (switch between modd 1 and 2) -> removed, only for flow calib
   threeV: Dev1/port1/line2 #3way 1
   threeV2: Dev1/port2/line3 #3way 2
 
   
 walls_sequence:
-  - grass.png
   - random_dots.png
-  - random_dots.png
-  - random_dots.png
-  - random_dots.png
-  - random_dots.png
-  - random_dots.png
-  - random_dots.png
-  - random_dots.png
-  - random_dots.png
-  - bark.png
-  - random_dots.png
-  - random_dots.png
-  - random_dots.png
-  - random_dots.png
-  - random_dots.png
-  - random_dots.png
-  - random_dots.png
-  - random_dots.png
-  - random_dots.png
-  - leaves.png
   - random_dots.png
   - random_dots.png
   - random_dots.png
@@ -115,7 +98,7 @@ walls_sequence:
   - random_dots.png
   - random_dots.png
   - random_dots.png
-  - honeycomb.png
+  - grating1.jpg
   - random_dots.png
   - random_dots.png
   - random_dots.png
@@ -135,6 +118,36 @@ walls_sequence:
   - random_dots.png
   - random_dots.png
   - random_dots.png
+  - big_light_rectangles.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - grass.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - honeycomb.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
+  - random_dots.png
   - leaves.png
   - random_dots.png
   - random_dots.png
@@ -145,7 +158,7 @@ walls_sequence:
   - random_dots.png
   - random_dots.png
   - random_dots.png
-  - grating1.jpg
+  - waves.png
   - random_dots.png
   - random_dots.png
   - random_dots.png
@@ -155,7 +168,7 @@ walls_sequence:
   - random_dots.png
   - random_dots.png
   - random_dots.png
-  - big_dark_rectangles.png
+  - bark.png
   - random_dots.png
   - random_dots.png
   - random_dots.png
@@ -166,14 +179,6 @@ walls_sequence:
   - random_dots.png
   - random_dots.png
   - big_light_circles.png
-  - random_dots.png
-  - random_dots.png
-  - random_dots.png
-  - random_dots.png
-  - random_dots.png
-  - random_dots.png
-  - random_dots.png
-  - random_dots.png
   - random_dots.png
   
 inputs: 
