@@ -251,6 +251,8 @@ class FlipTunnel:
         self.wasRewarded = False
         self.wasManuallyRewarded = False
         self.wasAssistRewarded = False
+        self.reward_count = 0
+        self.assist_count = 0
 
         self.assist_sound_playing = False
         self.main_sound_playing = False
@@ -395,7 +397,7 @@ class FlipTunnel:
         self.odour_diffs = {
             'final-five': 0,
             'landmark': 2,
-            'flush':1,
+            'flush':1.5,
             'odour_overlap': 0.05}
         
         try:
@@ -493,7 +495,7 @@ class FlipTunnel:
         if self.isChallenged:
             self.checkIfPunished()
             print("licked, current pos: ", self.tunnel.position,
-                  " current goal ", self.goals[self.currentGoalIdx])
+                  " current goal ", self.goals[self.currentGoalIdx]," current speed ", self.avg_speed)
             self.isChallenged = False
             self.wasChallenged = True
             if self.checkWithinGoal():
@@ -540,6 +542,7 @@ class FlipTunnel:
             else:
                 print('Getting reward with assist')
                 self.wasAssistRewarded = True
+                self.assist_count = self.assist_count + 1
                 self.triggerReward(mode='assist')
                 self.handleNextGoal()
 
@@ -626,6 +629,8 @@ class FlipTunnel:
         else:
             tone_length = self.reward_tone_length
 
+        self.reward_count = self.reward_count+1
+        print('giving reward num {}'.format(self.reward_count))
         print('stopping after {} sec'.format(length))
 
         if self.ruleName in ['audio-guided-sequence', 'protocol5_lv3']:
@@ -737,12 +742,7 @@ class FlipTunnel:
             #     print('no corresponding valve found, no odour')
 
             self.flush_done = False
-            if odour in [0,2,4,6,8]:
-                self.fivevalvecontroller.start()
-                print('opening 5way valve to position A')
-            else:
-                self.fivevalvecontroller.stop()
-                print('opening 5way valve to position B')
+
         else:
             print(self.tunnel.position)
             print('prepping odour {}'.format(odour))
@@ -914,7 +914,7 @@ class FlipTunnel:
         return self.avg_speed < threshold
 
     def checkWithinGoal(self):
-        if self.ruleName in ['sequence', 'audio-guided-sequence', 'protocol5_lv3', 'olfactory_support']:
+        if self.ruleName in ['sequence', 'audio-guided-sequence', 'protocol5_lv3', 'olfactory_support', 'olfactory_shaping1']:
             goals = self.goals[self.currentGoalIdx]
             position = self.tunnel.position
             if position > goals[0] and position < goals[1]:
@@ -926,9 +926,11 @@ class FlipTunnel:
                 else:
                     return True
             return False
-        elif self.ruleName in ['all', 'olfactory_shaping1']:
+        elif self.ruleName in ['all']:
+            active_goals = self.goals[~self.currentGoalIdx-1]
+            print(active_goals)
             position = self.tunnel.position
-            for goals in self.goals:
+            for goals in active_goals:
                 if position > goals[0] and position < goals[1]:
                     if self.speed_limit != -1:
                         if self.checkSpeedLimit(self.speed_limit):
@@ -966,7 +968,7 @@ class FlipTunnel:
             if position > landmarks[0] and position < landmarks[1]:
                 return True
             return False
-        elif self.ruleName in ['olfactory_support']:
+        elif self.ruleName in ['olfactory_support', 'olfactory_shaping1']:
             position = self.tunnel.position
             landmarks = self.landmarks[self.currentLMIdx]
             if position > landmarks[0] and position < landmarks[1]:
@@ -990,7 +992,7 @@ class FlipTunnel:
         
 
     def checkWithinPreviousOrCurrentGoal(self):
-        if self.ruleName in ['sequence', 'audio-guided-sequence', 'protocol5_lv3', 'olfactory_support']:
+        if self.ruleName in ['all','sequence', 'audio-guided-sequence', 'protocol5_lv3', 'olfactory_support', 'olfactory_shaping1']:
             position = self.tunnel.position
             # This is equal to subtracting one
             previousGoalIdx = (self.currentGoalIdx +
@@ -1004,7 +1006,7 @@ class FlipTunnel:
             return True
 
     def handleNextGoal(self):
-        if self.ruleName in ['sequence', 'audio-guided-sequence', 'protocol5_lv3', 'olfactory_support']:
+        if self.ruleName in ['all','sequence', 'audio-guided-sequence', 'protocol5_lv3', 'olfactory_support', 'olfactory_shaping1']:
             self.currentGoalIdx = (self.currentGoalIdx + 1) % self.goalNums
             print('next goal is set to {}'.format(self.currentGoalIdx))
         elif self.ruleName == 'run-auto' or self.ruleName == 'run-lick':
@@ -1018,7 +1020,7 @@ class FlipTunnel:
             print('next goal is set to {}'.format(self.currentGoal))
     
     def handleNextLM(self):
-        if self.ruleName in ['olfactory_support']:
+        if self.ruleName in ['olfactory_support', 'olfactory_shaping1']:
             self.currentLMIdx = (self.currentLMIdx + 1) % self.LMNums
             print('next landmark is set to {}'.format(self.currentLMIdx))
 
@@ -1121,7 +1123,7 @@ class FlipTunnel:
                 self.odourcontroller5 = nidaq.DigitalOutput(
                     options['daqChannel']['odour5'])
                 self.odourcontroller6 = nidaq.DigitalOutput(
-                    options['daqChannel']['odour6'])
+                    options['daqChannel']['mo1'])
                 self.finalvalve1controller = nidaq.DigitalOutput(
                     options['daqChannel']['finalV1'])
                 self.odourcontroller7 = nidaq.DigitalOutput(
@@ -1135,7 +1137,7 @@ class FlipTunnel:
                 self.odourcontroller11 = nidaq.DigitalOutput(
                     options['daqChannel']['odour11'])
                 self.odourcontroller12 = nidaq.DigitalOutput(
-                    options['daqChannel']['odour12'])
+                    options['daqChannel']['mo2'])
                 self.finalvalve2controller = nidaq.DigitalOutput(
                     options['daqChannel']['finalV2'])
                 self.fivevalvecontroller = nidaq.DigitalOutput(
@@ -1238,6 +1240,10 @@ class FlipTunnel:
             self.odourcontroller12.close()
             self.finalvalve2controller.close()
             self.threevalve2controller.close()
+        print('Summary: total run distance {}'.format(self.total_forward_run_distance))
+        print('Summary: number of laps {}'.format(self.total_forward_run_distance/self.flip_tunnel_options['corridor_len']))
+        print('Summary: number of rewards {}'.format(self.reward_count))
+        print('Summary: number of assist rewards{}'.format(self.assist_count))
 
     def position_logging_task(self, task):
         if not hasattr(task, 'next_log_time'):
